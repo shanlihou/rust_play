@@ -1,6 +1,8 @@
 extern crate time;
 pub mod exam;
-pub mod list;
+pub mod stack;
+pub mod question_420;
+pub mod question_1044;
 use std::path::Path;
 use std::fs::File;
 use std::io::Read;
@@ -17,8 +19,15 @@ fn main() {
     let end = time::now();
     println!("end:{:?}", end);
     println!("Hello, world! ret is {}, use:{}", ret, end - start);
-    list::test();
 
+    let str_s = "1010101010aaaB10101010".to_string();
+    println!("s len:{:?}", str_s.len());
+    let ret = question_420::Solution::strong_password_checker(str_s);
+    println!("result:{:?}", ret);
+    let str_s = "banana".to_string();
+    let ret = question_1044::Solution::longest_dup_substring(str_s);
+    println!("result:{:?}", ret);
+    stack::test();
 }
 
 fn read_data() ->Vec<i32>{
