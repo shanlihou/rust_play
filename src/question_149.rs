@@ -9,27 +9,51 @@ struct Point<'a> {
 
 }
 
-#[derive(Debug)]
-struct LineVec {
-    x: f32,
-    y: f32
+#[derive(Debug, Hash, Eq, PartialEq)]
+pub struct LineVec {
+    x: i32,
+    y: i32
 }
 
-impl std::cmp::PartialEq for LineVec {
-    fn eq(&self, other:&Self) -> bool {
-        false
+macro_rules! abs {
+    ($x:expr) => {
+        if $x > 0 {
+            $x
+        }
+        else {
+            -$x
+        }
     }
 }
 
-impl std::cmp::Eq for LineVec {
-}
-
 impl Solution {
-    pub fn calc_rate(a:Vec<i32>, b:Vec<i32>) -> LineVec {
-        let diff_x = (b[0] - a[0]) as f32;
-        let diff_y = (b[1] - a[1]) as f32;
-        let diff_mod = (diff_x * diff_x + diff_y * diff_y).sqrt();
-        LineVec{x:diff_x / diff_mod, y:diff_y / diff_mod}
+    pub fn gcd(a:i32, b:i32) -> i32 {
+        let mut a = a;
+        let mut b = b;
+        let mut c = 0;
+        while b != 0 {
+            c = a % b;
+            a = b;
+            b = c;
+        }
+        a
+    }
+
+    pub fn calc_rate(a:&Vec<i32>, b:&Vec<i32>) -> LineVec {
+        let diff_x = b[0] - a[0];
+        let diff_y = b[1] - a[1];
+        if diff_x == 0 {
+            return LineVec{x:0, y:1}
+        }
+
+        let _gcd = Solution::gcd(abs!(diff_x), abs!(diff_y));
+        if (diff_y as i64) * (diff_x as i64) < 0 {
+            LineVec{x: abs!(diff_x) / _gcd, y: -abs!(diff_y) / _gcd}
+        }
+        else {
+            LineVec{x: abs!(diff_x) / _gcd, y: abs!(diff_y) / _gcd}
+        }
+
     }
 
     pub fn max_points(points: Vec<Vec<i32>>) -> i32 {
@@ -41,7 +65,7 @@ impl Solution {
                 continue
             }
 
-            let _vec = Solution::calc_rate(points[start], points[i]);
+            let _vec = Solution::calc_rate(&points[start], &points[i]);
             println!("_vec:{:?}", _vec);
         }
         0
