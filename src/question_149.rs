@@ -57,17 +57,38 @@ impl Solution {
     }
 
     pub fn max_points(points: Vec<Vec<i32>>) -> i32 {
-        println!("points :{:?}", points);
-        let a:HashMap<LineVec, i32> = HashMap::new();
         let start = 1;
+        let mut max_num = 0;
         for i in 0..points.len() {
-            if i == start {
-                continue
+            let mut rate_map:HashMap<LineVec, i32> = HashMap::new();
+            let mut max_inner = 1;
+            let mut same_pos = 0;
+            for j in (i + 1)..points.len() {
+                if points[i][0] == points[j][0] && points[i][1] == points[j][1] {
+                    same_pos += 1;
+                    continue
+                }
+
+                let rate = Solution::calc_rate(&points[i], &points[j]);
+                if rate_map.contains_key(&rate) {
+                    if let x = rate_map.get_mut(&rate).unwrap() {
+                        *x += 1;
+                        if *x > max_inner {
+                            max_inner = *x;
+                        }
+                    }
+                }
+                else {
+                    rate_map.insert(rate, 1);
+                }
             }
 
-            let _vec = Solution::calc_rate(&points[start], &points[i]);
-            println!("_vec:{:?}", _vec);
+            max_inner  += same_pos;
+            if max_num < max_inner {
+                max_num = max_inner;
+            }
         }
-        0
+        max_num += 1;
+        if max_num <= points.len() as i32 {max_num} else {points.len() as i32}
     }
 }
